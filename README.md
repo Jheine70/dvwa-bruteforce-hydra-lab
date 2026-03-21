@@ -1,5 +1,5 @@
 # dvwa-bruteforce-hydra-lab
-Ataque de força bruta com Hydra em (DVWA). Realizado em ambiente mobile.
+Ataque de força bruta com Hydra em (DVWA).
 
 ---
 
